@@ -1,0 +1,166 @@
+.image-preview-modal {
+  text-align: center;
+}
+
+.image-preview-modal .ant-modal-content {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 90vw;
+  min-width: 300px;
+  width: auto !important;
+  max-height: 90vh;
+  margin: 0 auto;
+  position: relative;
+  padding: 20px;
+}
+
+/* Style the close button */
+.image-preview-modal .ant-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1600;
+}
+
+.image-preview-modal .ant-modal-close-x {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: bold;
+  color: white;
+}
+
+.carousel-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  max-height: 80vh;
+}
+
+.single-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  margin: 0 auto;
+  display: block;
+}
+
+.carousel-item {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
+/* Custom arrows */
+.custom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.custom-arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+  color: #1890ff;
+}
+
+.prev-arrow {
+  left: 20px;
+}
+
+.next-arrow {
+  right: 20px;
+}
+
+/* Make sure the Ant Design icons are visible */
+.custom-arrow .anticon {
+  font-size: 20px;
+  display: block;
+}
+
+.carousel-counter {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Fix for Ant Design Carousel */
+.image-preview-modal .ant-carousel {
+  width: 100%;
+}
+
+.image-preview-modal .ant-carousel .slick-dots {
+  bottom: -25px;
+}
+
+.image-preview-modal .ant-carousel .slick-dots li button {
+  background: #d9d9d9;
+}
+
+.image-preview-modal .ant-carousel .slick-dots li.slick-active button {
+  background: #1890ff;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .image-preview-modal .ant-modal-content {
+    margin: 0 10px;
+    padding: 10px;
+  }
+  
+  .carousel-item {
+    height: 50vh;
+  }
+  
+  .preview-image {
+    max-height: 50vh;
+  }
+  
+  .custom-arrow {
+    width: 36px;
+    height: 36px;
+  }
+
+  .prev-arrow {
+    left: 10px;
+  }
+
+  .next-arrow {
+    right: 10px;
+  }
+} 

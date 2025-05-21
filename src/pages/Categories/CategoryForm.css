@@ -1,0 +1,25 @@
+.category-form-page {
+  width: 100%;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 800px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.back-button {
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .form-card {
+    max-width: 100%;
+  }
+} 
