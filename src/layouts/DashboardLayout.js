@@ -48,6 +48,13 @@ const DashboardLayout = () => {
     setCollapsed(!collapsed);
   };
 
+  const handleMenuClick = () => {
+    // Close sidebar on menu click in mobile view
+    if (isMobile) {
+      setCollapsed(true);
+    }
+  };
+
   const userMenuItems = {
     items: [
       {
@@ -63,12 +70,20 @@ const DashboardLayout = () => {
     {
       key: ROUTES.CATEGORIES,
       icon: <DesktopOutlined />,
-      label: <Link to={ROUTES.CATEGORIES}>Categories</Link>,
+      label: (
+        <Link to={ROUTES.CATEGORIES} onClick={() => handleMenuClick(ROUTES.CATEGORIES)}>
+          Categories
+        </Link>
+      ),
     },
     {
       key: ROUTES.PRODUCTS,
       icon: <ShoppingOutlined />,
-      label: <Link to={ROUTES.PRODUCTS}>Products</Link>,
+      label: (
+        <Link to={ROUTES.PRODUCTS} onClick={() => handleMenuClick(ROUTES.PRODUCTS)}>
+          Products
+        </Link>
+      ),
     },
     // Only show Users menu item for admin users
     ...(isAdmin
@@ -76,7 +91,11 @@ const DashboardLayout = () => {
           {
             key: ROUTES.USERS,
             icon: <TeamOutlined />,
-            label: <Link to={ROUTES.USERS}>Users</Link>,
+            label: (
+              <Link to={ROUTES.USERS} onClick={() => handleMenuClick(ROUTES.USERS)}>
+                Users
+              </Link>
+            ),
           },
         ]
       : []),
@@ -102,7 +121,11 @@ const DashboardLayout = () => {
         }}
       >
         <div className="sidebar-logo">
-          <Link to={ROUTES.DASHBOARD} className="logo">
+          <Link
+            to={ROUTES.DASHBOARD}
+            className="logo"
+            onClick={() => handleMenuClick(ROUTES.DASHBOARD)}
+          >
             {APP_NAME}
           </Link>
           {isMobile && (

@@ -2,6 +2,10 @@
   padding: 20px;
 }
 
+.categories-table .ant-btn {
+  padding: 0;
+}
+
 .page-header {
   margin-bottom: 24px;
 }
@@ -21,6 +25,11 @@
   margin-bottom: 24px;
 }
 
+.ant-table-wrapper {
+  width: 100%;
+}
+
+/* Custom responsive table styling */
 .responsive-table {
   overflow-x: auto;
 }
@@ -29,6 +38,12 @@
   min-width: 100%;
 }
 
+.responsive-table .ant-table-tbody > tr > td {
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Media queries for responsiveness */
 @media (max-width: 768px) {
   .categories-page {
     padding: 12px;
@@ -46,5 +61,55 @@
   .table-card {
     border-radius: 4px;
     margin-bottom: 16px;
+  }
+
+  .table-card .ant-card-body {
+    padding: 8px;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 8px;
+    white-space: nowrap;
+  }
+
+  .ant-table-cell .ant-space {
+    gap: 4px !important;
+  }
+
+  .ant-typography {
+    font-size: 0.9rem;
+  }
+
+  .ant-card-head-title {
+    font-size: 1rem;
+  }
+
+  .ant-breadcrumb {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Additional styling for specific screen sizes */
+@media (max-width: 480px) {
+  .ant-btn {
+    min-height: 36px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ant-table-tbody .ant-btn {
+    padding: 4px;
+  }
+
+  .ant-pagination-item,
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    min-width: 30px;
+    height: 30px;
+    line-height: 30px;
   }
 } 
