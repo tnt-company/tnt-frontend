@@ -21,13 +21,6 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      
-    - name: Download environment file from S3
-      run: |
-        aws s3 cp s3://tnt-development-new/environment-variables/config-ui/.env .env  
-
-    - name: Build React App
-      run: npm run build
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -35,6 +28,13 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.AWS_REGION }}
+      
+    - name: Download environment file from S3
+      run: |
+        aws s3 cp s3://tnt-development-new/environment-variables/config-ui/.env .env  
+
+    - name: Build React App
+      run: npm run build
 
     - name: Deploy to S3
       run: |
