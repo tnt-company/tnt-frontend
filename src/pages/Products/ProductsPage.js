@@ -160,16 +160,7 @@ const ProductsPage = () => {
       key: 'name',
       width: isMobile ? 150 : 200,
       ellipsis: true,
-    },
-    {
-      title: 'Category',
-      dataIndex: 'categoryId',
-      key: 'category',
-      width: isMobile ? 120 : 150,
-      render: categoryId => {
-        const category = categories?.find(cat => cat?.id === categoryId);
-        return category ? category?.name : categoryId;
-      },
+      fixed: 'left',
     },
     {
       title: 'Price',
@@ -189,6 +180,16 @@ const ProductsPage = () => {
           },
         ]
       : []),
+    {
+      title: 'Category',
+      dataIndex: 'categoryId',
+      key: 'category',
+      width: isMobile ? 120 : 150,
+      render: categoryId => {
+        const category = categories?.find(cat => cat?.id === categoryId);
+        return category ? category?.name : categoryId;
+      },
+    },
     {
       title: 'Image',
       dataIndex: 'imageUrl',
