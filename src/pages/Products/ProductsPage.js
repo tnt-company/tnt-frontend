@@ -20,7 +20,7 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 20,
     total: 0,
   });
   const [searchQuery, setSearchQuery] = useState('');
