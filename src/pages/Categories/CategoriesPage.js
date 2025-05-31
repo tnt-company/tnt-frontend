@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { categoryService } from '../../services/categoryService';
 import { notificationInstance } from '../../services/api';
-import { ROLES } from '../../constants';
+import { ITEMS_PER_PAGE, ROLES } from '../../constants';
 import SearchInput from '../../components/SearchInput';
 import './CategoriesPage.css';
 
@@ -16,7 +16,7 @@ const CategoriesPage = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 20,
+    pageSize: ITEMS_PER_PAGE,
     total: 0,
   });
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,7 +47,7 @@ const CategoriesPage = () => {
       setPagination(prev => ({
         ...prev,
         current: page,
-        total: response?.total * 10, // Assuming 10 items per page
+        total: response?.total * ITEMS_PER_PAGE, // Assuming 10 items per page
       }));
     } catch (error) {
       notificationInstance.error({

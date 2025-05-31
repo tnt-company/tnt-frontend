@@ -9,7 +9,7 @@ import { notificationInstance } from '../../services/api';
 import ImagePreviewModal from '../../components/ImagePreviewModal';
 import SearchInput from '../../components/SearchInput';
 import CategoryFilter from '../../components/CategoryFilter';
-import { ROLES } from '../../constants';
+import { ITEMS_PER_PAGE, ROLES } from '../../constants';
 import './ProductsPage.css';
 
 const { Title } = Typography;
@@ -20,7 +20,7 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 20,
+    pageSize: ITEMS_PER_PAGE,
     total: 0,
   });
   const [searchQuery, setSearchQuery] = useState('');
@@ -56,7 +56,7 @@ const ProductsPage = () => {
       setPagination(prev => ({
         ...prev,
         current: page,
-        total: response?.total * 10, // Assuming 10 items per page
+        total: response?.total * ITEMS_PER_PAGE, // Assuming 10 items per page
       }));
     } catch (error) {
       notificationInstance.error({
@@ -229,7 +229,6 @@ const ProductsPage = () => {
           {
             title: 'Actions',
             key: 'actions',
-            fixed: isMobile ? false : 'right',
             width: isMobile ? 100 : 120,
             render: (_, record) => (
               <Space size={isMobile ? 'small' : 'middle'}>
