@@ -39,12 +39,11 @@ export const authService = {
         message: response.data.message || 'Password changed successfully',
       };
     } catch (error) {
+      // Handle the error structure properly
       return {
         success: false,
-        message:
-          error?.response?.data?.error?.message ||
-          error?.response?.data?.message ||
-          'Password change failed',
+        message: error?.response?.data?.message || 'Password change failed',
+        error: error?.response?.data?.error || null,
       };
     }
   },

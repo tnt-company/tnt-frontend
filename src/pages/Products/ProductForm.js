@@ -197,9 +197,20 @@ const ProductForm = () => {
           });
           navigate('/dashboard/products');
         } else {
+          // Extract error message for validation errors
+          let errorMessage = response?.message || 'Failed to update product. Please try again.';
+
+          if (response?.error?.details && response?.error?.details?.length > 0) {
+            // Get first validation error message
+            errorMessage = response?.error?.details[0]?.message;
+          } else if (response?.error?.message) {
+            // Get general error message
+            errorMessage = response?.error?.message;
+          }
+
           notificationInstance.error({
             message: 'Update Failed',
-            description: response?.message || 'Failed to update product. Please try again.',
+            description: errorMessage,
             placement: 'topRight',
             duration: 4,
           });
@@ -215,9 +226,20 @@ const ProductForm = () => {
           });
           navigate('/dashboard/products');
         } else {
+          // Extract error message for validation errors
+          let errorMessage = response?.message || 'Failed to create product. Please try again.';
+
+          if (response?.error?.details && response?.error?.details?.length > 0) {
+            // Get first validation error message
+            errorMessage = response?.error?.details[0]?.message;
+          } else if (response?.error?.message) {
+            // Get general error message
+            errorMessage = response?.error?.message;
+          }
+
           notificationInstance.error({
             message: 'Creation Failed',
-            description: response?.message || 'Failed to create product. Please try again.',
+            description: errorMessage,
             placement: 'topRight',
             duration: 4,
           });
@@ -228,15 +250,26 @@ const ProductForm = () => {
       console.error(`Error ${errorMsg} product:`, error);
 
       // Extract error message from response if available
-      const serverErrorMsg = error?.response?.data?.message || `Failed to ${errorMsg} product`;
-      const errorDetails = error?.response?.data?.errors
-        ? Object.values(error?.response?.data?.errors).join(', ')
-        : '';
+      let errorMessage = `Failed to ${errorMsg} product`;
+
+      if (
+        error?.response?.data?.error?.details &&
+        error?.response?.data?.error?.details?.length > 0
+      ) {
+        // Get first validation error message
+        errorMessage = error?.response?.data?.error?.details[0]?.message;
+      } else if (error?.response?.data?.error?.message) {
+        // Get general error message
+        errorMessage = error?.response?.data?.error?.message;
+      } else if (error?.response?.data?.message) {
+        // Fallback to general message
+        errorMessage = error?.response?.data?.message;
+      }
 
       // Use notification directly to ensure message is displayed
       notificationInstance.error({
         message: `Product ${isEditing ? 'Update' : 'Creation'} Failed`,
-        description: serverErrorMsg + (errorDetails ? ': ' + errorDetails : ''),
+        description: errorMessage,
         placement: 'topRight',
         duration: 6,
         key: 'product-operation-error',
