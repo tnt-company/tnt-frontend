@@ -32,3 +32,4 @@ export const STORAGE_KEYS = {
 // App Constants
 export const APP_NAME = 'TNT';
 export const MAX_PRODUCT_IMAGES = 10;
+export const ITEMS_PER_PAGE = 20;
