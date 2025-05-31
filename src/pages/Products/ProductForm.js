@@ -279,6 +279,33 @@ const ProductForm = () => {
   const totalImages = existingImages?.length + newImages?.length;
   const canAddMoreImages = totalImages < MAX_PRODUCT_IMAGES;
 
+  // Check file type and size before upload
+  const beforeUpload = file => {
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      notificationInstance.error({
+        message: 'Invalid File Format',
+        description: 'You can only upload image files.',
+        placement: 'topRight',
+        duration: 4,
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    const isLessThan5MB = file.size / 1024 / 1024 < 5;
+    if (!isLessThan5MB) {
+      notificationInstance.error({
+        message: 'File Too Large',
+        description: 'Image must be smaller than 5MB.',
+        placement: 'topRight',
+        duration: 4,
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    return false; // Return false to prevent auto upload
+  };
+
   return (
     <div className="product-form-page">
       <div className="page-header">
@@ -411,7 +438,7 @@ const ProductForm = () => {
               name="new_images"
               valuePropName="fileList"
               getValueFromEvent={handleFileUpload}
-              extra={`You can upload up to ${MAX_PRODUCT_IMAGES} images. ${
+              extra={`You can upload up to ${MAX_PRODUCT_IMAGES} images (max 5MB each, image formats only). ${
                 canAddMoreImages
                   ? `${MAX_PRODUCT_IMAGES - totalImages} slots remaining.`
                   : 'Maximum limit reached.'
@@ -420,7 +447,7 @@ const ProductForm = () => {
               <Upload
                 listType="picture-card"
                 fileList={newImages}
-                beforeUpload={() => false}
+                beforeUpload={beforeUpload}
                 multiple={true}
                 maxCount={MAX_PRODUCT_IMAGES - existingImages?.length}
                 disabled={!canAddMoreImages}
