@@ -1,6 +1,7 @@
 // API URLs
 export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
 export const LOGIN_URL = `${API_BASE_URL}/auth/login`;
+export const CHANGE_PASSWORD_URL = `${API_BASE_URL}/auth/change-password`;
 
 // S3 URL
 export const S3_BASE_URL =
@@ -13,6 +14,7 @@ export const ROUTES = {
   CATEGORIES: '/dashboard/categories',
   PRODUCTS: '/dashboard/products',
   USERS: '/dashboard/users',
+  CHANGE_PASSWORD: '/dashboard/change-password',
 };
 
 // User Roles

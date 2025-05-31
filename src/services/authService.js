@@ -1,5 +1,5 @@
 import api from './api';
-import { LOGIN_URL, STORAGE_KEYS } from '../constants';
+import { LOGIN_URL, CHANGE_PASSWORD_URL, STORAGE_KEYS } from '../constants';
 
 export const authService = {
   login: async (email, password) => {
@@ -22,6 +22,29 @@ export const authService = {
         success: false,
         message:
           error?.response?.data?.error?.message || error?.response?.data?.message || 'Login failed',
+      };
+    }
+  },
+
+  changePassword: async (oldPassword, newPassword, confirmPassword) => {
+    try {
+      const response = await api.post(CHANGE_PASSWORD_URL, {
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      });
+
+      return {
+        success: response.data.success,
+        message: response.data.message || 'Password changed successfully',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error?.response?.data?.error?.message ||
+          error?.response?.data?.message ||
+          'Password change failed',
       };
     }
   },
