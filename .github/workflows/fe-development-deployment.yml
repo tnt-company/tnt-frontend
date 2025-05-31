@@ -34,7 +34,7 @@ jobs:
         aws s3 cp s3://tnt-development-new/environment-variables/config-ui/.env .env  
 
     - name: Build React App
-      run: npm run build
+      run: GENERATE_SOURCEMAP=false npm run build
 
     - name: Deploy to S3
       run: |
