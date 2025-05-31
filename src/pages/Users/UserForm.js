@@ -71,26 +71,68 @@ const UserForm = () => {
   const onFinish = async values => {
     setLoading(true);
     try {
+      let response;
+
       // For updates, only include password if it was provided
-      if (isEditing && !values.password) {
-        const { ...dataWithoutPassword } = values;
-        await userService.updateUser(id, dataWithoutPassword);
+      if (isEditing) {
+        const dataToUpdate = values.password ? values : { ...values, password: undefined };
+        response = await userService.updateUser(id, dataToUpdate);
       } else {
-        await (isEditing ? userService.updateUser(id, values) : userService.createUser(values));
+        response = await userService.createUser(values);
       }
 
-      notificationInstance.success({
-        message: `User ${isEditing ? 'Updated' : 'Created'}`,
-        description: `The user has been successfully ${isEditing ? 'updated' : 'created'}.`,
-        placement: 'topRight',
-        duration: 4,
-      });
-      navigate('/dashboard/users');
+      if (response && response.success) {
+        notificationInstance.success({
+          message: `User ${isEditing ? 'Updated' : 'Created'}`,
+          description: `The user has been successfully ${isEditing ? 'updated' : 'created'}.`,
+          placement: 'topRight',
+          duration: 4,
+        });
+        navigate('/dashboard/users');
+      } else {
+        // Extract error message for validation errors
+        let errorMessage =
+          response?.message ||
+          `Failed to ${isEditing ? 'update' : 'create'} user. Please try again.`;
+
+        if (response?.error?.details && response?.error?.details?.length > 0) {
+          // Get first validation error message
+          errorMessage = response?.error?.details[0]?.message;
+        } else if (response?.error?.message) {
+          // Get general error message
+          errorMessage = response?.error?.message;
+        }
+
+        notificationInstance.error({
+          message: `User ${isEditing ? 'Update' : 'Creation'} Failed`,
+          description: errorMessage,
+          placement: 'topRight',
+          duration: 4,
+        });
+      }
     } catch (error) {
       const errorMsg = isEditing ? 'updating' : 'creating';
+
+      // Extract error message from response if available
+      let errorMessage = `Failed to ${errorMsg} user`;
+
+      if (
+        error?.response?.data?.error?.details &&
+        error?.response?.data?.error?.details?.length > 0
+      ) {
+        // Get first validation error message
+        errorMessage = error?.response?.data?.error?.details[0]?.message;
+      } else if (error?.response?.data?.error?.message) {
+        // Get general error message
+        errorMessage = error?.response?.data?.error?.message;
+      } else if (error?.response?.data?.message) {
+        // Fallback to general message
+        errorMessage = error?.response?.data?.message;
+      }
+
       notificationInstance.error({
         message: `User ${isEditing ? 'Update' : 'Creation'} Failed`,
-        description: `Failed to ${errorMsg} the user. Please try again.`,
+        description: errorMessage,
         placement: 'topRight',
         duration: 4,
       });

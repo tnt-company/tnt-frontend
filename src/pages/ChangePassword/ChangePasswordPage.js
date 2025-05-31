@@ -29,17 +29,45 @@ const ChangePasswordPage = () => {
         });
         navigate(ROUTES.DASHBOARD);
       } else {
+        // Handle validation errors or other error responses
+        let errorMessage = 'Password change failed';
+
+        if (response?.error?.details && response?.error?.details?.length > 0) {
+          // Get first validation error message
+          errorMessage = response?.error?.details[0]?.message;
+        } else if (response?.error?.message) {
+          // Get general error message
+          errorMessage = response?.error?.message;
+        } else if (response?.message) {
+          // Fallback to general message
+          errorMessage = response?.message;
+        }
+
         notificationInstance.error({
           message: 'Error',
-          description: response.message,
+          description: errorMessage,
           placement: 'topRight',
           duration: 4,
         });
       }
     } catch (error) {
+      // Handle unexpected errors
+      let errorMessage = 'An unexpected error occurred';
+
+      if (error?.response?.data?.error?.details && error.response.data.error.details.length > 0) {
+        // Get first validation error message from axios error
+        errorMessage = error?.response?.data?.error?.details[0]?.message;
+      } else if (error?.response?.data?.error?.message) {
+        // Get general error message
+        errorMessage = error?.response?.data?.error?.message;
+      } else if (error?.response?.data?.message) {
+        // Fallback to general message
+        errorMessage = error?.response?.data?.message;
+      }
+
       notificationInstance.error({
         message: 'Error',
-        description: 'An unexpected error occurred',
+        description: errorMessage,
         placement: 'topRight',
         duration: 4,
       });
