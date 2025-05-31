@@ -351,8 +351,12 @@ const ProductForm = () => {
               />
             </Form.Item>
 
-            <Form.Item label="Category" name="categoryId">
-              <Select placeholder="Select a category (optional)">
+            <Form.Item
+              label="Category"
+              name="categoryId"
+              rules={[{ required: true, message: 'Please select a category' }]}
+            >
+              <Select placeholder="Select a category">
                 {categories?.map(category => (
                   <Option key={category?.id} value={category?.id}>
                     {category?.name}
