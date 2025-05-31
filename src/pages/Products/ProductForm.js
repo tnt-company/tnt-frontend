@@ -88,23 +88,28 @@ const ProductForm = () => {
             ? response?.data?.imageUrl
             : `${S3_BASE_URL}${response?.data?.imageUrl}`;
 
+          const filename = response?.data?.imageUrl?.split('/').pop();
+
           images.push({
             url: fullUrl,
             path: response?.data?.imageUrl,
-            name: 'Image 1',
+            name: filename,
           });
         }
 
         // Support for imageUrls array
         if (response?.data?.imageUrls && Array.isArray(response?.data?.imageUrls)) {
-          response?.data?.imageUrls?.forEach((imgUrl, index) => {
+          response?.data?.imageUrls?.forEach(imgUrl => {
             if (imgUrl && imgUrl.trim()) {
               const fullUrl = imgUrl.startsWith('http') ? imgUrl : `${S3_BASE_URL}${imgUrl}`;
+
+              // Extract the actual filename from the path
+              const filename = imgUrl.split('/').pop();
 
               images.push({
                 url: fullUrl,
                 path: imgUrl,
-                name: `Image ${index + 2}`,
+                name: filename,
               });
             }
           });
@@ -112,14 +117,17 @@ const ProductForm = () => {
 
         // Support for images array
         if (response?.data?.images && Array.isArray(response?.data?.images)) {
-          response?.data?.images?.forEach((imgUrl, index) => {
+          response?.data?.images?.forEach(imgUrl => {
             if (imgUrl && imgUrl.trim()) {
               const fullUrl = imgUrl.startsWith('http') ? imgUrl : `${S3_BASE_URL}${imgUrl}`;
+
+              // Extract the actual filename from the path
+              const filename = imgUrl.split('/').pop();
 
               images.push({
                 url: fullUrl,
                 path: imgUrl,
-                name: `Image ${index + 2}`,
+                name: filename,
               });
             }
           });
