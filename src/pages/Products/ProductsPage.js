@@ -22,6 +22,7 @@ const ProductsPage = () => {
     current: 1,
     pageSize: ITEMS_PER_PAGE,
     total: 0,
+    showSizeChanger: false,
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryId, setCategoryId] = useState(undefined);
