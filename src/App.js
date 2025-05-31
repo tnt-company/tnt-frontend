@@ -15,6 +15,7 @@ import ProductsPage from './pages/Products/ProductsPage';
 import ProductForm from './pages/Products/ProductForm';
 import UsersPage from './pages/Users/UsersPage';
 import UserForm from './pages/Users/UserForm';
+import ChangePasswordPage from './pages/ChangePassword/ChangePasswordPage';
 
 // Components
 import AuthGuard from './components/AuthGuard';
@@ -65,6 +66,16 @@ function App() {
             <Route path="products" element={<ProductsPage />} />
             <Route path="products/add" element={<ProductForm />} />
             <Route path="products/edit/:id" element={<ProductForm />} />
+
+            {/* Change Password Route - Admin Only */}
+            <Route
+              path="change-password"
+              element={
+                <RoleGuard allowedRoles={[ROLES.ADMIN]}>
+                  <ChangePasswordPage />
+                </RoleGuard>
+              }
+            />
 
             {/* Users Routes - Admin Only */}
             <Route

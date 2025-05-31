@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Dropdown, Avatar } from 'antd';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import {
   DesktopOutlined,
   ShoppingOutlined,
@@ -9,6 +9,7 @@ import {
   MenuOutlined,
   CloseOutlined,
   TeamOutlined,
+  KeyOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice';
@@ -19,6 +20,7 @@ const { Header, Sider, Content, Footer } = Layout;
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector(state => state.auth);
   const isAdmin = user?.role === ROLES.ADMIN;
 
@@ -55,8 +57,20 @@ const DashboardLayout = () => {
     }
   };
 
+  // Create user menu items array with conditional change password option
   const userMenuItems = {
     items: [
+      // Only show Change Password option for admin users
+      ...(isAdmin
+        ? [
+            {
+              key: 'change-password',
+              icon: <KeyOutlined />,
+              label: 'Change Password',
+              onClick: () => navigate(ROUTES.CHANGE_PASSWORD),
+            },
+          ]
+        : []),
       {
         key: 'logout',
         icon: <LogoutOutlined />,
