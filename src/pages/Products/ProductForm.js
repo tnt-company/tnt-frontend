@@ -356,7 +356,14 @@ const ProductForm = () => {
               name="categoryId"
               rules={[{ required: true, message: 'Please select a category' }]}
             >
-              <Select placeholder="Select a category">
+              <Select
+                placeholder="Select a category"
+                showSearch
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+                optionFilterProp="children"
+              >
                 {categories?.map(category => (
                   <Option key={category?.id} value={category?.id}>
                     {category?.name}
