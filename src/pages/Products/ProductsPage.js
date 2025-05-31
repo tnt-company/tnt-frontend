@@ -9,7 +9,7 @@ import { notificationInstance } from '../../services/api';
 import ImagePreviewModal from '../../components/ImagePreviewModal';
 import SearchInput from '../../components/SearchInput';
 import CategoryFilter from '../../components/CategoryFilter';
-import { ROLES } from '../../constants';
+import { ITEMS_PER_PAGE, ROLES } from '../../constants';
 import './ProductsPage.css';
 
 const { Title } = Typography;
@@ -20,8 +20,9 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: ITEMS_PER_PAGE,
     total: 0,
+    showSizeChanger: false,
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryId, setCategoryId] = useState(undefined);
@@ -56,7 +57,7 @@ const ProductsPage = () => {
       setPagination(prev => ({
         ...prev,
         current: page,
-        total: response?.total * 10, // Assuming 10 items per page
+        total: response?.total * ITEMS_PER_PAGE, // Assuming 10 items per page
       }));
     } catch (error) {
       notificationInstance.error({
@@ -160,16 +161,7 @@ const ProductsPage = () => {
       key: 'name',
       width: isMobile ? 150 : 200,
       ellipsis: true,
-    },
-    {
-      title: 'Category',
-      dataIndex: 'categoryId',
-      key: 'category',
-      width: isMobile ? 120 : 150,
-      render: categoryId => {
-        const category = categories?.find(cat => cat?.id === categoryId);
-        return category ? category?.name : categoryId;
-      },
+      fixed: 'left',
     },
     {
       title: 'Price',
@@ -189,6 +181,16 @@ const ProductsPage = () => {
           },
         ]
       : []),
+    {
+      title: 'Category',
+      dataIndex: 'categoryId',
+      key: 'category',
+      width: isMobile ? 120 : 150,
+      render: categoryId => {
+        const category = categories?.find(cat => cat?.id === categoryId);
+        return category ? category?.name : categoryId;
+      },
+    },
     {
       title: 'Image',
       dataIndex: 'imageUrl',
@@ -228,7 +230,6 @@ const ProductsPage = () => {
           {
             title: 'Actions',
             key: 'actions',
-            fixed: isMobile ? false : 'right',
             width: isMobile ? 100 : 120,
             render: (_, record) => (
               <Space size={isMobile ? 'small' : 'middle'}>

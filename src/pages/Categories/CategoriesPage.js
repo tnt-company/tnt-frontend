@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { categoryService } from '../../services/categoryService';
 import { notificationInstance } from '../../services/api';
-import { ROLES } from '../../constants';
+import { ITEMS_PER_PAGE, ROLES } from '../../constants';
 import SearchInput from '../../components/SearchInput';
 import './CategoriesPage.css';
 
@@ -16,14 +16,29 @@ const CategoriesPage = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: ITEMS_PER_PAGE,
     total: 0,
+    showSizeChanger: false,
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const navigate = useNavigate();
   const { user } = useSelector(state => state.auth);
   const isAdmin = user?.role === ROLES.ADMIN;
+  const isMobile = windowWidth <= 768;
+
+  // Listen for window resize events
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window?.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const fetchCategories = async (page = 1, search = '') => {
     setLoading(true);
@@ -33,7 +48,7 @@ const CategoriesPage = () => {
       setPagination(prev => ({
         ...prev,
         current: page,
-        total: response?.total * 10, // Assuming 10 items per page
+        total: response?.total * ITEMS_PER_PAGE, // Assuming 10 items per page
       }));
     } catch (error) {
       notificationInstance.error({
@@ -85,13 +100,15 @@ const CategoriesPage = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      width: '30%',
+      width: isMobile ? 150 : 200,
+      ellipsis: true,
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
-      width: '40%',
+      width: isMobile ? 150 : 250,
+      ellipsis: true,
     },
   ];
 
@@ -100,22 +117,33 @@ const CategoriesPage = () => {
     columns.push({
       title: 'Actions',
       key: 'actions',
-      width: '15%',
+      width: isMobile ? 100 : 120,
+      fixed: isMobile ? false : 'right',
       render: (_, record) => (
-        <Space size="middle">
+        <Space size={isMobile ? 'small' : 'middle'}>
           <Button
             type="text"
+            size={isMobile ? 'small' : 'middle'}
             icon={<EditOutlined />}
             onClick={() => navigate(`/dashboard/categories/edit/${record.id}`)}
           />
           <Popconfirm
             title="Delete this category?"
-            description="Are you sure you want to delete this category? This action cannot be undone."
+            description={
+              isMobile
+                ? null
+                : 'Are you sure you want to delete this category? This action cannot be undone.'
+            }
             onConfirm={() => handleDelete(record.id)}
             okText="Yes"
             cancelText="No"
           >
-            <Button type="text" danger icon={<DeleteOutlined />} />
+            <Button
+              type="text"
+              danger
+              size={isMobile ? 'small' : 'middle'}
+              icon={<DeleteOutlined />}
+            />
           </Popconfirm>
         </Space>
       ),
@@ -151,14 +179,19 @@ const CategoriesPage = () => {
       </Row>
 
       <Card className="table-card">
-        <Table
-          columns={columns}
-          dataSource={categories.map(cat => ({ ...cat, key: cat.id }))}
-          pagination={pagination}
-          loading={loading}
-          onChange={handleTableChange}
-          rowKey="id"
-        />
+        <div className="responsive-table">
+          <Table
+            columns={columns}
+            dataSource={categories.map(cat => ({ ...cat, key: cat.id }))}
+            pagination={pagination}
+            loading={loading}
+            onChange={handleTableChange}
+            rowKey="id"
+            scroll={{ x: 'max-content' }}
+            size={isMobile ? 'small' : 'middle'}
+            className="categories-table"
+          />
+        </div>
       </Card>
     </div>
   );

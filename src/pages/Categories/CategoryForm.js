@@ -53,29 +53,90 @@ const CategoryForm = () => {
   const onFinish = async values => {
     setLoading(true);
     try {
+      let response;
+
       if (isEditing) {
-        await categoryService.updateCategory(id, values);
-        notificationInstance.success({
-          message: 'Category Updated',
-          description: 'The category has been successfully updated.',
-          placement: 'topRight',
-          duration: 4,
-        });
+        response = await categoryService.updateCategory(id, values);
+        if (response && response.success) {
+          notificationInstance.success({
+            message: 'Category Updated',
+            description: 'The category has been successfully updated.',
+            placement: 'topRight',
+            duration: 4,
+          });
+          navigate('/dashboard/categories');
+        } else {
+          // Extract error message for validation errors
+          let errorMessage = response?.message || 'Failed to update category. Please try again.';
+
+          if (response?.error?.details && response?.error?.details?.length > 0) {
+            // Get first validation error message
+            errorMessage = response?.error?.details[0]?.message;
+          } else if (response?.error?.message) {
+            // Get general error message
+            errorMessage = response?.error?.message;
+          }
+
+          notificationInstance.error({
+            message: 'Update Failed',
+            description: errorMessage,
+            placement: 'topRight',
+            duration: 4,
+          });
+        }
       } else {
-        await categoryService.createCategory(values);
-        notificationInstance.success({
-          message: 'Category Created',
-          description: 'The new category has been successfully created.',
-          placement: 'topRight',
-          duration: 4,
-        });
+        response = await categoryService.createCategory(values);
+        if (response && response.success) {
+          notificationInstance.success({
+            message: 'Category Created',
+            description: 'The new category has been successfully created.',
+            placement: 'topRight',
+            duration: 4,
+          });
+          navigate('/dashboard/categories');
+        } else {
+          // Extract error message for validation errors
+          let errorMessage = response?.message || 'Failed to create category. Please try again.';
+
+          if (response?.error?.details && response.error.details.length > 0) {
+            // Get first validation error message
+            errorMessage = response.error.details[0].message;
+          } else if (response?.error?.message) {
+            // Get general error message
+            errorMessage = response.error.message;
+          }
+
+          notificationInstance.error({
+            message: 'Creation Failed',
+            description: errorMessage,
+            placement: 'topRight',
+            duration: 4,
+          });
+        }
       }
-      navigate('/dashboard/categories');
     } catch (error) {
       const errorMsg = isEditing ? 'updating' : 'creating';
+
+      // Extract error message from response if available
+      let errorMessage = `Failed to ${errorMsg} category`;
+
+      if (
+        error?.response?.data?.error?.details &&
+        error?.response?.data?.error?.details?.length > 0
+      ) {
+        // Get first validation error message
+        errorMessage = error?.response?.data?.error?.details[0]?.message;
+      } else if (error?.response?.data?.error?.message) {
+        // Get general error message
+        errorMessage = error?.response?.data?.error?.message;
+      } else if (error?.response?.data?.message) {
+        // Fallback to general message
+        errorMessage = error?.response?.data?.message;
+      }
+
       notificationInstance.error({
         message: `Category ${isEditing ? 'Update' : 'Creation'} Failed`,
-        description: `Failed to ${errorMsg} the category. Please try again.`,
+        description: errorMessage,
         placement: 'topRight',
         duration: 4,
       });

@@ -15,7 +15,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../../services/userService';
 import { notificationInstance } from '../../services/api';
-import { ROLES } from '../../constants';
+import { ITEMS_PER_PAGE, ROLES } from '../../constants';
 import SearchInput from '../../components/SearchInput';
 import './UsersPage.css';
 
@@ -26,8 +26,9 @@ const UsersPage = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: ITEMS_PER_PAGE,
     total: 0,
+    showSizeChanger: false,
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -55,7 +56,7 @@ const UsersPage = () => {
       setPagination(prev => ({
         ...prev,
         current: page,
-        total: response?.total * 10, // Assuming 10 items per page
+        total: response?.total * ITEMS_PER_PAGE, // Assuming 10 items per page
       }));
     } catch (error) {
       notificationInstance.error({

@@ -88,23 +88,28 @@ const ProductForm = () => {
             ? response?.data?.imageUrl
             : `${S3_BASE_URL}${response?.data?.imageUrl}`;
 
+          const filename = response?.data?.imageUrl?.split('/').pop();
+
           images.push({
             url: fullUrl,
             path: response?.data?.imageUrl,
-            name: 'Image 1',
+            name: filename,
           });
         }
 
         // Support for imageUrls array
         if (response?.data?.imageUrls && Array.isArray(response?.data?.imageUrls)) {
-          response?.data?.imageUrls?.forEach((imgUrl, index) => {
+          response?.data?.imageUrls?.forEach(imgUrl => {
             if (imgUrl && imgUrl.trim()) {
               const fullUrl = imgUrl.startsWith('http') ? imgUrl : `${S3_BASE_URL}${imgUrl}`;
+
+              // Extract the actual filename from the path
+              const filename = imgUrl.split('/').pop();
 
               images.push({
                 url: fullUrl,
                 path: imgUrl,
-                name: `Image ${index + 2}`,
+                name: filename,
               });
             }
           });
@@ -112,14 +117,17 @@ const ProductForm = () => {
 
         // Support for images array
         if (response?.data?.images && Array.isArray(response?.data?.images)) {
-          response?.data?.images?.forEach((imgUrl, index) => {
+          response?.data?.images?.forEach(imgUrl => {
             if (imgUrl && imgUrl.trim()) {
               const fullUrl = imgUrl.startsWith('http') ? imgUrl : `${S3_BASE_URL}${imgUrl}`;
+
+              // Extract the actual filename from the path
+              const filename = imgUrl.split('/').pop();
 
               images.push({
                 url: fullUrl,
                 path: imgUrl,
-                name: `Image ${index + 2}`,
+                name: filename,
               });
             }
           });
@@ -197,9 +205,20 @@ const ProductForm = () => {
           });
           navigate('/dashboard/products');
         } else {
+          // Extract error message for validation errors
+          let errorMessage = response?.message || 'Failed to update product. Please try again.';
+
+          if (response?.error?.details && response?.error?.details?.length > 0) {
+            // Get first validation error message
+            errorMessage = response?.error?.details[0]?.message;
+          } else if (response?.error?.message) {
+            // Get general error message
+            errorMessage = response?.error?.message;
+          }
+
           notificationInstance.error({
             message: 'Update Failed',
-            description: response?.message || 'Failed to update product. Please try again.',
+            description: errorMessage,
             placement: 'topRight',
             duration: 4,
           });
@@ -215,9 +234,20 @@ const ProductForm = () => {
           });
           navigate('/dashboard/products');
         } else {
+          // Extract error message for validation errors
+          let errorMessage = response?.message || 'Failed to create product. Please try again.';
+
+          if (response?.error?.details && response?.error?.details?.length > 0) {
+            // Get first validation error message
+            errorMessage = response?.error?.details[0]?.message;
+          } else if (response?.error?.message) {
+            // Get general error message
+            errorMessage = response?.error?.message;
+          }
+
           notificationInstance.error({
             message: 'Creation Failed',
-            description: response?.message || 'Failed to create product. Please try again.',
+            description: errorMessage,
             placement: 'topRight',
             duration: 4,
           });
@@ -228,15 +258,26 @@ const ProductForm = () => {
       console.error(`Error ${errorMsg} product:`, error);
 
       // Extract error message from response if available
-      const serverErrorMsg = error?.response?.data?.message || `Failed to ${errorMsg} product`;
-      const errorDetails = error?.response?.data?.errors
-        ? Object.values(error?.response?.data?.errors).join(', ')
-        : '';
+      let errorMessage = `Failed to ${errorMsg} product`;
+
+      if (
+        error?.response?.data?.error?.details &&
+        error?.response?.data?.error?.details?.length > 0
+      ) {
+        // Get first validation error message
+        errorMessage = error?.response?.data?.error?.details[0]?.message;
+      } else if (error?.response?.data?.error?.message) {
+        // Get general error message
+        errorMessage = error?.response?.data?.error?.message;
+      } else if (error?.response?.data?.message) {
+        // Fallback to general message
+        errorMessage = error?.response?.data?.message;
+      }
 
       // Use notification directly to ensure message is displayed
       notificationInstance.error({
         message: `Product ${isEditing ? 'Update' : 'Creation'} Failed`,
-        description: serverErrorMsg + (errorDetails ? ': ' + errorDetails : ''),
+        description: errorMessage,
         placement: 'topRight',
         duration: 6,
         key: 'product-operation-error',
@@ -278,6 +319,33 @@ const ProductForm = () => {
 
   const totalImages = existingImages?.length + newImages?.length;
   const canAddMoreImages = totalImages < MAX_PRODUCT_IMAGES;
+
+  // Check file type and size before upload
+  const beforeUpload = file => {
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      notificationInstance.error({
+        message: 'Invalid File Format',
+        description: 'You can only upload image files.',
+        placement: 'topRight',
+        duration: 4,
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    const isLessThan5MB = file.size / 1024 / 1024 < 5;
+    if (!isLessThan5MB) {
+      notificationInstance.error({
+        message: 'File Too Large',
+        description: 'Image must be smaller than 5MB.',
+        placement: 'topRight',
+        duration: 4,
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    return false; // Return false to prevent auto upload
+  };
 
   return (
     <div className="product-form-page">
@@ -324,8 +392,19 @@ const ProductForm = () => {
               />
             </Form.Item>
 
-            <Form.Item label="Category" name="categoryId">
-              <Select placeholder="Select a category (optional)">
+            <Form.Item
+              label="Category"
+              name="categoryId"
+              rules={[{ required: true, message: 'Please select a category' }]}
+            >
+              <Select
+                placeholder="Select a category"
+                showSearch
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+                optionFilterProp="children"
+              >
                 {categories?.map(category => (
                   <Option key={category?.id} value={category?.id}>
                     {category?.name}
@@ -411,7 +490,7 @@ const ProductForm = () => {
               name="new_images"
               valuePropName="fileList"
               getValueFromEvent={handleFileUpload}
-              extra={`You can upload up to ${MAX_PRODUCT_IMAGES} images. ${
+              extra={`You can upload up to ${MAX_PRODUCT_IMAGES} images (max 5MB each, image formats only). ${
                 canAddMoreImages
                   ? `${MAX_PRODUCT_IMAGES - totalImages} slots remaining.`
                   : 'Maximum limit reached.'
@@ -420,7 +499,7 @@ const ProductForm = () => {
               <Upload
                 listType="picture-card"
                 fileList={newImages}
-                beforeUpload={() => false}
+                beforeUpload={beforeUpload}
                 multiple={true}
                 maxCount={MAX_PRODUCT_IMAGES - existingImages?.length}
                 disabled={!canAddMoreImages}

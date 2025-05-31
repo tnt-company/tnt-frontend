@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Dropdown, Avatar } from 'antd';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import {
   DesktopOutlined,
   ShoppingOutlined,
@@ -9,6 +9,7 @@ import {
   MenuOutlined,
   CloseOutlined,
   TeamOutlined,
+  KeyOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/authSlice';
@@ -19,6 +20,7 @@ const { Header, Sider, Content, Footer } = Layout;
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector(state => state.auth);
   const isAdmin = user?.role === ROLES.ADMIN;
 
@@ -48,8 +50,27 @@ const DashboardLayout = () => {
     setCollapsed(!collapsed);
   };
 
+  const handleMenuClick = () => {
+    // Close sidebar on menu click in mobile view
+    if (isMobile) {
+      setCollapsed(true);
+    }
+  };
+
+  // Create user menu items array with conditional change password option
   const userMenuItems = {
     items: [
+      // Only show Change Password option for admin users
+      ...(isAdmin
+        ? [
+            {
+              key: 'change-password',
+              icon: <KeyOutlined />,
+              label: 'Change Password',
+              onClick: () => navigate(ROUTES.CHANGE_PASSWORD),
+            },
+          ]
+        : []),
       {
         key: 'logout',
         icon: <LogoutOutlined />,
@@ -63,12 +84,20 @@ const DashboardLayout = () => {
     {
       key: ROUTES.CATEGORIES,
       icon: <DesktopOutlined />,
-      label: <Link to={ROUTES.CATEGORIES}>Categories</Link>,
+      label: (
+        <Link to={ROUTES.CATEGORIES} onClick={() => handleMenuClick(ROUTES.CATEGORIES)}>
+          Categories
+        </Link>
+      ),
     },
     {
       key: ROUTES.PRODUCTS,
       icon: <ShoppingOutlined />,
-      label: <Link to={ROUTES.PRODUCTS}>Products</Link>,
+      label: (
+        <Link to={ROUTES.PRODUCTS} onClick={() => handleMenuClick(ROUTES.PRODUCTS)}>
+          Products
+        </Link>
+      ),
     },
     // Only show Users menu item for admin users
     ...(isAdmin
@@ -76,7 +105,11 @@ const DashboardLayout = () => {
           {
             key: ROUTES.USERS,
             icon: <TeamOutlined />,
-            label: <Link to={ROUTES.USERS}>Users</Link>,
+            label: (
+              <Link to={ROUTES.USERS} onClick={() => handleMenuClick(ROUTES.USERS)}>
+                Users
+              </Link>
+            ),
           },
         ]
       : []),
@@ -102,7 +135,11 @@ const DashboardLayout = () => {
         }}
       >
         <div className="sidebar-logo">
-          <Link to={ROUTES.DASHBOARD} className="logo">
+          <Link
+            to={ROUTES.DASHBOARD}
+            className="logo"
+            onClick={() => handleMenuClick(ROUTES.DASHBOARD)}
+          >
             {APP_NAME}
           </Link>
           {isMobile && (
