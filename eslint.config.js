@@ -1,7 +1,7 @@
-import reactPlugin from 'eslint-plugin-react';
-import prettierPlugin from 'eslint-plugin-prettier';
+const reactPlugin = require('eslint-plugin-react');
+const prettierPlugin = require('eslint-plugin-prettier');
 
-export default [
+module.exports = [
   {
     ignores: ['build/**', 'node_modules/**', 'coverage/**'],
   },
