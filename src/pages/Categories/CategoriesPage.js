@@ -86,9 +86,12 @@ const CategoriesPage = () => {
       });
       fetchCategories(pagination?.current, searchQuery);
     } catch (error) {
+      console.log(error);
       notificationInstance.error({
         message: 'Delete Failed',
-        description: 'Failed to delete the category. Please try again.',
+        description:
+          error?.response?.data?.error?.message ||
+          'Failed to delete the category. Please try again.',
         placement: 'topRight',
         duration: 4,
       });

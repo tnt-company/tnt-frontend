@@ -117,7 +117,9 @@ const ProductsPage = () => {
     } catch (error) {
       notificationInstance.error({
         message: 'Delete Failed',
-        description: 'Failed to delete the product. Please try again.',
+        description:
+          error?.response?.data?.error?.message ||
+          'Failed to delete the product. Please try again.',
         placement: 'topRight',
         duration: 4,
       });
