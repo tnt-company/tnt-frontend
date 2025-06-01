@@ -86,7 +86,6 @@ const CategoriesPage = () => {
       });
       fetchCategories(pagination?.current, searchQuery);
     } catch (error) {
-      console.log(error);
       notificationInstance.error({
         message: 'Delete Failed',
         description:
