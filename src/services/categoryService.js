@@ -4,18 +4,10 @@ import { API_BASE_URL } from '../constants';
 export const categoryService = {
   // Get all categories with pagination and search
   getCategories: async (page = 1, search = '') => {
-    try {
-      const response = await api.get(`${API_BASE_URL}/categories`, {
-        params: { page, search },
-      });
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: error?.response?.data?.message || 'Failed to fetch categories',
-        error: error?.response?.data?.error || null,
-      };
-    }
+    const response = await api.get(`${API_BASE_URL}/categories`, {
+      params: { page, search },
+    });
+    return response.data;
   },
 
   // Get a single category by ID
@@ -62,15 +54,7 @@ export const categoryService = {
 
   // Delete a category
   deleteCategory: async id => {
-    try {
-      const response = await api.delete(`${API_BASE_URL}/categories/${id}`);
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: error?.response?.data?.message || 'Failed to delete category',
-        error: error?.response?.data?.error || null,
-      };
-    }
+    const response = await api.delete(`${API_BASE_URL}/categories/${id}`);
+    return response.data;
   },
 };

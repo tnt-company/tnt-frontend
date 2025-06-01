@@ -4,26 +4,18 @@ import { API_BASE_URL } from '../constants';
 export const productService = {
   // Get all products with pagination, search, and category filter
   getProducts: async (page = 1, search = '', categoryId = undefined) => {
-    try {
-      const params = { page };
+    const params = { page };
 
-      if (search) {
-        params.search = search;
-      }
-
-      if (categoryId) {
-        params.categoryId = categoryId;
-      }
-
-      const response = await api.get(`${API_BASE_URL}/products`, { params });
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: error?.response?.data?.message || 'Failed to fetch products',
-        error: error?.response?.data?.error || null,
-      };
+    if (search) {
+      params.search = search;
     }
+
+    if (categoryId) {
+      params.categoryId = categoryId;
+    }
+
+    const response = await api.get(`${API_BASE_URL}/products`, { params });
+    return response.data;
   },
 
   // Get a single product by ID
@@ -78,15 +70,7 @@ export const productService = {
 
   // Delete a product
   deleteProduct: async id => {
-    try {
-      const response = await api.delete(`${API_BASE_URL}/products/${id}`);
-      return response.data;
-    } catch (error) {
-      return {
-        success: false,
-        message: error?.response?.data?.message || 'Failed to delete product',
-        error: error?.response?.data?.error || null,
-      };
-    }
+    const response = await api.delete(`${API_BASE_URL}/products/${id}`);
+    return response.data;
   },
 };
