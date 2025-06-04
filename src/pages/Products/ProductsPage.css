@@ -124,4 +124,21 @@
     height: 30px;
     line-height: 30px;
   }
+}
+
+/* AutoComplete dropdown styling */
+.ant-select-dropdown.ant-select-dropdown-placement-bottomLeft,
+.ant-auto-complete-dropdown {
+  max-height: 300px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ant-auto-complete-dropdown .ant-select-item {
+  padding: 10px 12px;
+}
+
+/* Higher z-index for dropdowns to ensure they're on top */
+.category-filter .ant-select-dropdown,
+.category-filter .ant-auto-complete-dropdown {
+  z-index: 1050;
 } 
