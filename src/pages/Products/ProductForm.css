@@ -154,18 +154,4 @@
   .preview-image {
     max-height: 300px;
   }
-}
-
-/* Dropdown styling for mobile */
-.ant-select-dropdown {
-  -webkit-overflow-scrolling: touch;
-}
-
-.ant-select-dropdown .rc-virtual-list-holder {
-  touch-action: pan-y;
-}
-
-/* Override any conflicting styles */
-body.dropdown-open {
-  overflow: hidden !important;
 } 

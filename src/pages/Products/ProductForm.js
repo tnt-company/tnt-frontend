@@ -347,38 +347,8 @@ const ProductForm = () => {
     return false; // Return false to prevent auto upload
   };
 
-  // Dropdown touch handler component
-  const DropdownTouchHandler = () => {
-    useEffect(() => {
-      const handleDropdownTouchStart = e => {
-        // Find if touch is inside a dropdown
-        const dropdown = document.querySelector('.ant-select-dropdown');
-        if (dropdown && dropdown.contains(e.target)) {
-          // Prevent body scrolling
-          document.body.style.overflow = 'hidden';
-        }
-      };
-
-      const handleDropdownTouchEnd = () => {
-        // Restore body scrolling
-        document.body.style.overflow = '';
-      };
-
-      document.addEventListener('touchstart', handleDropdownTouchStart, { passive: true });
-      document.addEventListener('touchend', handleDropdownTouchEnd, { passive: true });
-
-      return () => {
-        document.removeEventListener('touchstart', handleDropdownTouchStart);
-        document.removeEventListener('touchend', handleDropdownTouchEnd);
-      };
-    }, []);
-
-    return null; // This component doesn't render anything
-  };
-
   return (
     <div className="product-form-page">
-      <DropdownTouchHandler />
       <div className="page-header">
         <Breadcrumb
           items={[
@@ -435,6 +405,7 @@ const ProductForm = () => {
                 }
                 optionFilterProp="children"
                 getPopupContainer={trigger => trigger.parentNode}
+                virtual={false}
               >
                 {categories?.map(category => (
                   <Option key={category?.id} value={category?.id}>
