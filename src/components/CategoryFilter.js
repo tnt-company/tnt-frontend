@@ -28,7 +28,6 @@ const CategoryFilterComponent = ({
         value: category.id,
         label: category.name,
       }))}
-      virtual={false}
     />
   );
 };
