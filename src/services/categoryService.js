@@ -3,9 +3,9 @@ import { API_BASE_URL } from '../constants';
 
 export const categoryService = {
   // Get all categories with pagination and search
-  getCategories: async (page = 1, search = '') => {
+  getCategories: async (page = 1, search = '', pagination = 'true') => {
     const response = await api.get(`${API_BASE_URL}/categories`, {
-      params: { page, search },
+      params: { page, search, pagination },
     });
     return response.data;
   },
