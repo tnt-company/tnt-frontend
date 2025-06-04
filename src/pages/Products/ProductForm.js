@@ -45,7 +45,7 @@ const ProductForm = () => {
   // Fetch categories for the dropdown
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.getCategories(1);
+      const response = await categoryService.getCategories(1, '', 'false');
       setCategories(response.data);
     } catch (error) {
       notificationInstance.error({

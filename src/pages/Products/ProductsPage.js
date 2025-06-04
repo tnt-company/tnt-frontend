@@ -75,7 +75,7 @@ const ProductsPage = () => {
   // Fetch categories for lookup and filter
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.getCategories(1);
+      const response = await categoryService.getCategories(1, '', 'false');
       setCategories(response?.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
