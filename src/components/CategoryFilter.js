@@ -1,5 +1,5 @@
-import React, { memo, useState, useEffect } from 'react';
-import { AutoComplete } from 'antd';
+import React, { memo } from 'react';
+import { Select } from 'antd';
 import PropTypes from 'prop-types';
 
 const CategoryFilterComponent = ({
@@ -10,59 +10,24 @@ const CategoryFilterComponent = ({
   style,
   className,
 }) => {
-  // State for input value
-  const [inputValue, setInputValue] = useState('');
-  // State for filtered options
-  const [options, setOptions] = useState([]);
-
-  // Initialize options and input value when categories or value changes
-  useEffect(() => {
-    // Set all categories as options
-    setOptions(
-      categories.map(category => ({
-        key: category.id,
-        value: category.name,
-        label: category.name,
-      }))
-    );
-
-    // If there's a selected value, update the input field
-    if (value) {
-      const selectedCategory = categories.find(cat => cat.id === value);
-      setInputValue(selectedCategory ? selectedCategory.name : '');
-    }
-  }, [categories, value]);
-
-  // Handle searching
-  const handleSearch = text => {
-    setInputValue(text);
-
-    // If text is empty, clear the selection
-    if (!text) {
-      onChange(undefined);
-    }
-  };
-
-  // Handle selection
-  const handleSelect = (selectedText, option) => {
-    setInputValue(selectedText);
-    onChange(option.key);
-  };
-
   return (
-    <AutoComplete
-      value={inputValue}
-      options={options}
+    <Select
+      placeholder={placeholder || 'Filter by Category'}
+      onChange={onChange}
+      value={value}
       style={{ ...style }}
       className={`category-filter ${className || ''}`}
-      placeholder={placeholder || 'Filter by Category'}
-      onSearch={handleSearch}
-      onSelect={handleSelect}
       allowClear
+      showSearch
+      optionFilterProp="children"
       getPopupContainer={trigger => trigger.parentNode}
-      filterOption={(inputValue, option) =>
-        option.value.toLowerCase().includes(inputValue.toLowerCase())
+      filterOption={(input, option) =>
+        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
       }
+      options={categories.map(category => ({
+        value: category.id,
+        label: category.name,
+      }))}
     />
   );
 };
