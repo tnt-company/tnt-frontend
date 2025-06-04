@@ -404,6 +404,7 @@ const ProductForm = () => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
                 optionFilterProp="children"
+                getPopupContainer={trigger => trigger.parentNode}
               >
                 {categories?.map(category => (
                   <Option key={category?.id} value={category?.id}>
