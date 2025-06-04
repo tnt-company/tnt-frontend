@@ -20,6 +20,7 @@ const CategoryFilterComponent = ({
       allowClear
       showSearch
       optionFilterProp="children"
+      getPopupContainer={trigger => trigger.parentNode}
       filterOption={(input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
       }
