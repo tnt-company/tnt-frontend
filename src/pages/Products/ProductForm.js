@@ -405,7 +405,6 @@ const ProductForm = () => {
                 }
                 optionFilterProp="children"
                 getPopupContainer={trigger => trigger.parentNode}
-                virtual={false}
               >
                 {categories?.map(category => (
                   <Option key={category?.id} value={category?.id}>
