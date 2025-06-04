@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 
@@ -10,31 +10,6 @@ const CategoryFilterComponent = ({
   style,
   className,
 }) => {
-  // Handle dropdown touch events
-  useEffect(() => {
-    const handleDropdownTouchStart = e => {
-      // Find if touch is inside a dropdown
-      const dropdown = document.querySelector('.ant-select-dropdown');
-      if (dropdown && dropdown.contains(e.target)) {
-        // Prevent body scrolling
-        document.body.style.overflow = 'hidden';
-      }
-    };
-
-    const handleDropdownTouchEnd = () => {
-      // Restore body scrolling
-      document.body.style.overflow = '';
-    };
-
-    document.addEventListener('touchstart', handleDropdownTouchStart, { passive: true });
-    document.addEventListener('touchend', handleDropdownTouchEnd, { passive: true });
-
-    return () => {
-      document.removeEventListener('touchstart', handleDropdownTouchStart);
-      document.removeEventListener('touchend', handleDropdownTouchEnd);
-    };
-  }, []);
-
   return (
     <Select
       placeholder={placeholder || 'Filter by Category'}
@@ -53,6 +28,7 @@ const CategoryFilterComponent = ({
         value: category.id,
         label: category.name,
       }))}
+      virtual={false}
     />
   );
 };
