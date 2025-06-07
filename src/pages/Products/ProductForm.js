@@ -9,12 +9,12 @@ import {
   Breadcrumb,
   Spin,
   InputNumber,
-  Select,
   Upload,
   Modal,
   Row,
   Col,
 } from 'antd';
+import Select, { components } from 'react-select';
 import { PlusOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { productService } from '../../services/productService';
@@ -25,7 +25,6 @@ import './ProductForm.css';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
-const { Option } = Select;
 
 const ProductForm = () => {
   const [form] = Form.useForm();
@@ -37,6 +36,7 @@ const ProductForm = () => {
   const [previewTitle, setPreviewTitle] = useState('');
   const [existingImages, setExistingImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -47,6 +47,11 @@ const ProductForm = () => {
     try {
       const response = await categoryService.getCategories(1, '', 'false');
       setCategories(response.data);
+
+      // If we're in edit mode and have an ID, fetch the product details after categories are loaded
+      if (isEditing && id) {
+        fetchProduct(response.data);
+      }
     } catch (error) {
       notificationInstance.error({
         message: 'Failed to Load Categories',
@@ -59,12 +64,9 @@ const ProductForm = () => {
 
   useEffect(() => {
     fetchCategories();
-    if (isEditing) {
-      fetchProduct();
-    }
   }, [id]);
 
-  const fetchProduct = async () => {
+  const fetchProduct = async categoriesData => {
     setInitialLoading(true);
     try {
       const response = await productService.getProduct(id);
@@ -74,10 +76,25 @@ const ProductForm = () => {
         form.setFieldsValue({
           name: response?.data?.name,
           description: response?.data?.description,
-          categoryId: response?.data?.categoryId,
           salesPrice: parseFloat(response?.data?.salesPrice),
           costPrice: parseFloat(response?.data?.costPrice),
+          categoryId: response?.data?.categoryId,
         });
+
+        // Set selected category
+        if (response?.data?.categoryId) {
+          const categoryId = response?.data?.categoryId;
+          // Use the categoriesData passed as parameter to ensure we have the latest data
+          const categoriesArray = categoriesData || categories;
+          const category = categoriesArray.find(cat => cat.id === categoryId);
+
+          if (category) {
+            setSelectedCategory({
+              value: categoryId,
+              label: category.name,
+            });
+          }
+        }
 
         // Process image URLs
         const images = [];
@@ -347,6 +364,32 @@ const ProductForm = () => {
     return false; // Return false to prevent auto upload
   };
 
+  // Format categories for react-select
+  const categoryOptions = categories.map(category => ({
+    value: category.id,
+    label: category.name,
+  }));
+
+  // Custom dropdown indicator
+  const customSelectComponents = {
+    DropdownIndicator: props => {
+      return (
+        <components.DropdownIndicator {...props}>
+          <svg
+            height="20"
+            width="20"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+            focusable="false"
+            className="css-8mmkcg"
+          >
+            <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+          </svg>
+        </components.DropdownIndicator>
+      );
+    },
+  };
+
   return (
     <div className="product-form-page">
       <div className="page-header">
@@ -392,26 +435,55 @@ const ProductForm = () => {
               />
             </Form.Item>
 
-            <Form.Item
-              label="Category"
-              name="categoryId"
-              rules={[{ required: true, message: 'Please select a category' }]}
-            >
-              <Select
-                placeholder="Select a category"
-                showSearch
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
-                optionFilterProp="children"
-                getPopupContainer={trigger => trigger.parentNode}
+            <Form.Item label="Category" required tooltip="Please select a product category">
+              <Form.Item
+                name="categoryId"
+                noStyle
+                rules={[{ required: true, message: 'Please select a category' }]}
               >
-                {categories?.map(category => (
-                  <Option key={category?.id} value={category?.id}>
-                    {category?.name}
-                  </Option>
-                ))}
-              </Select>
+                <div className="custom-select-wrapper">
+                  <Select
+                    className="category-select"
+                    classNamePrefix="react-select"
+                    placeholder="Select a category"
+                    value={selectedCategory}
+                    onChange={selected => {
+                      setSelectedCategory(selected);
+                      // Make sure to update the form value
+                      setTimeout(() => {
+                        form.setFieldsValue({
+                          categoryId: selected ? selected.value : undefined,
+                        });
+                      }, 0);
+                    }}
+                    options={categoryOptions}
+                    isClearable
+                    isSearchable
+                    components={customSelectComponents}
+                    menuPortalTarget={document.body}
+                    styles={{
+                      control: provided => ({
+                        ...provided,
+                        minHeight: '32px',
+                        cursor: 'pointer',
+                      }),
+                      valueContainer: provided => ({
+                        ...provided,
+                        padding: '0 8px',
+                      }),
+                      indicatorsContainer: provided => ({
+                        ...provided,
+                        height: '32px',
+                      }),
+                      menu: provided => ({
+                        ...provided,
+                        zIndex: 10,
+                      }),
+                      menuPortal: base => ({ ...base, zIndex: 9999 }),
+                    }}
+                  />
+                </div>
+              </Form.Item>
             </Form.Item>
 
             <Form.Item

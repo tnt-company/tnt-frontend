@@ -1,5 +1,5 @@
-import React, { memo, useState, useEffect } from 'react';
-import { AutoComplete } from 'antd';
+import React, { memo } from 'react';
+import Select, { components } from 'react-select';
 import PropTypes from 'prop-types';
 
 const CategoryFilterComponent = ({
@@ -10,59 +10,76 @@ const CategoryFilterComponent = ({
   style,
   className,
 }) => {
-  // State for input value
-  const [inputValue, setInputValue] = useState('');
-  // State for filtered options
-  const [options, setOptions] = useState([]);
+  // Format categories for react-select
+  const options = categories.map(category => ({
+    value: category.id,
+    label: category.name,
+  }));
 
-  // Initialize options and input value when categories or value changes
-  useEffect(() => {
-    // Set all categories as options
-    setOptions(
-      categories.map(category => ({
-        key: category.id,
-        value: category.name,
-        label: category.name,
-      }))
-    );
-
-    // If there's a selected value, update the input field
-    if (value) {
-      const selectedCategory = categories.find(cat => cat.id === value);
-      setInputValue(selectedCategory ? selectedCategory.name : '');
-    }
-  }, [categories, value]);
-
-  // Handle searching
-  const handleSearch = text => {
-    setInputValue(text);
-
-    // If text is empty, clear the selection
-    if (!text) {
-      onChange(undefined);
-    }
-  };
+  // Find the currently selected option
+  const selectedOption =
+    value && options.length ? options.find(option => option.value === value) || null : null;
 
   // Handle selection
-  const handleSelect = (selectedText, option) => {
-    setInputValue(selectedText);
-    onChange(option.key);
+  const handleChange = selected => {
+    onChange(selected ? selected.value : undefined);
+  };
+
+  // Custom dropdown indicator
+  const customSelectComponents = {
+    DropdownIndicator: props => {
+      return (
+        <components.DropdownIndicator {...props}>
+          <svg
+            height="20"
+            width="20"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+            focusable="false"
+            className="css-8mmkcg"
+          >
+            <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+          </svg>
+        </components.DropdownIndicator>
+      );
+    },
   };
 
   return (
-    <AutoComplete
-      value={inputValue}
-      options={options}
-      style={{ ...style }}
+    <Select
       className={`category-filter ${className || ''}`}
+      classNamePrefix="react-select"
       placeholder={placeholder || 'Filter by Category'}
-      onSearch={handleSearch}
-      onSelect={handleSelect}
-      allowClear
-      getPopupContainer={trigger => trigger.parentNode}
-      filterOption={(inputValue, option) =>
-        option.value.toLowerCase().includes(inputValue.toLowerCase())
-      }
+      value={selectedOption}
+      onChange={handleChange}
+      options={options}
+      isClearable
+      isSearchable
+      components={customSelectComponents}
+      styles={{
+        container: provided => ({
+          ...provided,
+          width: '100%',
+          ...style,
+        }),
+        control: provided => ({
+          ...provided,
+          minHeight: '32px',
+          cursor: 'pointer',
+        }),
+        valueContainer: provided => ({
+          ...provided,
+          padding: '0 8px',
+        }),
+        indicatorsContainer: provided => ({
+          ...provided,
+          height: '32px',
+        }),
+        menu: provided => ({
+          ...provided,
+          zIndex: 1050,
+        }),
+      }}
     />
   );
 };
