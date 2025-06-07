@@ -11,14 +11,14 @@ const CategoryFilterComponent = ({
   className,
 }) => {
   // Format categories for react-select
-  const options = categories.map(category => ({
-    value: category.id,
-    label: category.name,
+  const options = categories?.map(category => ({
+    value: category?.id,
+    label: category?.name,
   }));
 
   // Find the currently selected option
   const selectedOption =
-    value && options.length ? options.find(option => option.value === value) || null : null;
+    value && options?.length ? options?.find(option => option?.value === value) || null : null;
 
   // Handle selection
   const handleChange = selected => {
@@ -45,6 +45,17 @@ const CategoryFilterComponent = ({
     },
   };
 
+  // Custom filter function that's more flexible
+  const customFilter = (option, inputValue) => {
+    if (!inputValue) return true;
+
+    const optionLabel = option?.label?.toLowerCase();
+    const input = inputValue?.toLowerCase();
+
+    // Check if option label contains the input anywhere
+    return optionLabel?.includes(input);
+  };
+
   return (
     <Select
       className={`category-filter ${className || ''}`}
@@ -55,7 +66,9 @@ const CategoryFilterComponent = ({
       options={options}
       isClearable
       isSearchable
+      filterOption={customFilter}
       components={customSelectComponents}
+      menuPortalTarget={document.body}
       styles={{
         container: provided => ({
           ...provided,
@@ -79,6 +92,7 @@ const CategoryFilterComponent = ({
           ...provided,
           zIndex: 1050,
         }),
+        menuPortal: base => ({ ...base, zIndex: 9999 }),
       }}
     />
   );
