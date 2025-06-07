@@ -5,6 +5,14 @@ import { store } from './store';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { checkForNewVersion } from './utils/cacheUtils';
+
+// Check for new version and clear cache if needed
+checkForNewVersion();
+
+// Add timestamp to console for debugging
+console.log(`App initialized at: ${new Date().toISOString()}`);
+console.log(`Next cache refresh will be in approximately 7 days from last refresh`);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
