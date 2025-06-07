@@ -17,6 +17,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.10.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -47,7 +48,7 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^9.27.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "eslint-plugin-react": "^7.37.5",
