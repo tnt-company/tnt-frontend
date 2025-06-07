@@ -46,19 +46,21 @@ const ProductForm = () => {
   const fetchCategories = async () => {
     try {
       const response = await categoryService.getCategories(1, '', 'false');
-      setCategories(response.data);
+      setCategories(response?.data);
 
       // If we're in edit mode and have an ID, fetch the product details after categories are loaded
       if (isEditing && id) {
-        fetchProduct(response.data);
+        fetchProduct(response?.data);
       }
     } catch (error) {
+      console.error('Error fetching categories:', error);
       notificationInstance.error({
         message: 'Failed to Load Categories',
         description: 'Could not retrieve product categories. Please try again later.',
         placement: 'topRight',
         duration: 4,
       });
+      setCategories([]);
     }
   };
 
@@ -390,6 +392,17 @@ const ProductForm = () => {
     },
   };
 
+  // Custom filter function that's more flexible
+  const customFilter = (option, inputValue) => {
+    if (!inputValue) return true;
+
+    const optionLabel = option?.label?.toLowerCase();
+    const input = inputValue?.toLowerCase();
+
+    // Check if option label contains the input anywhere
+    return optionLabel?.includes(input);
+  };
+
   return (
     <div className="product-form-page">
       <div className="page-header">
@@ -459,6 +472,7 @@ const ProductForm = () => {
                     options={categoryOptions}
                     isClearable
                     isSearchable
+                    filterOption={customFilter}
                     components={customSelectComponents}
                     menuPortalTarget={document.body}
                     styles={{
