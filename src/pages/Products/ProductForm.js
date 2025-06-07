@@ -372,12 +372,6 @@ const ProductForm = () => {
     label: category.name,
   }));
 
-  // For debugging
-  useEffect(() => {
-    console.log('Categories loaded:', categories);
-    console.log('Category options:', categoryOptions);
-  }, [categories]);
-
   // Custom dropdown indicator
   const customSelectComponents = {
     DropdownIndicator: props => {
