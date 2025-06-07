@@ -99,10 +99,6 @@
 }
 
 @media (max-width: 768px) {
-  .user-dropdown-name {
-    display: none;
-  }
-  
   .dashboard-content {
     padding: 16px;
   }
@@ -113,6 +109,7 @@
   
   .header-title {
     font-size: 16px;
+    display: none;
   }
   
   .menu-trigger {
